@@ -1,4 +1,5 @@
 import { useId, useState } from 'react'
+import { Fretboard } from './Fretboard'
 import {
   NOTES,
   TRIAD_INTERVALS,
@@ -24,7 +25,8 @@ function App() {
         <p className="brand-mark">Dreiklang</p>
         <h1 className="brand-line">Akkorde hören und finden</h1>
         <p className="brand-sub">
-          Lerne Dur- und Moll-Dreiklänge am Notenkreis — oder spiele gegen deine eigene Streak.
+          Lerne Dur- und Moll-Dreiklänge am Notenkreis und Griffbrett — Grundton als Dreieck, Terz
+          und Quinte als Kreise — oder spiele gegen deine eigene Streak.
         </p>
         <nav className="mode-switch" aria-label="Modus">
           <button
@@ -60,7 +62,8 @@ function LearnPanel() {
     <section className="panel learn" aria-labelledby="learn-title">
       <h2 id="learn-title">Lernen</h2>
       <p className="panel-lead">
-        Wähle einen Grundton und die Tongeschlecht — die Stufen 1 · 3 · 5 leuchten mit.
+        Wähle einen Grundton und die Tongeschlecht — die Stufen 1 · 3 · 5 leuchten mit. Auf dem
+        Griffbrett markiert ein Dreieck den Grundton, Kreise Terz und Quinte.
       </p>
 
       <div className="controls">
@@ -100,6 +103,14 @@ function LearnPanel() {
       <p className="chord-name">
         {root}-{qualityLabel(quality)}
       </p>
+
+      <Fretboard
+        key={`${root}-${quality}`}
+        root={triad[0]}
+        third={triad[1]}
+        fifth={triad[2]}
+        title="Griffbrett — 1 · 3 · 5"
+      />
 
       <NotePad
         highlighted={triadSet}
@@ -251,6 +262,16 @@ function PlayPanel() {
         <p className={`feedback ${feedback}`} role="status">
           {message}
         </p>
+      ) : null}
+
+      {feedback === 'ok' ? (
+        <Fretboard
+          key={`${root}-${quality}-play`}
+          root={expected[0]}
+          third={expected[1]}
+          fifth={expected[2]}
+          title="Griffbrett — so liegt der Dreiklang"
+        />
       ) : null}
     </section>
   )
