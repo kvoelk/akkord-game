@@ -271,12 +271,17 @@
   cursor: default;
 }
 
-.chord-diagram.interactive .chord-diagram-nut:not(:disabled) {
+.chord-diagram:not(.interactive) .chord-diagram-nut,
+.chord-diagram:not(.interactive) .chord-diagram-cell {
+  pointer-events: none;
+}
+
+.chord-diagram.interactive .chord-diagram-nut {
   cursor: pointer;
   border-radius: 2px;
 }
 
-.chord-diagram.interactive .chord-diagram-nut:not(:disabled):hover {
+.chord-diagram.interactive .chord-diagram-nut:hover {
   background: rgba(46, 139, 122, 0.15);
   color: var(--accent-deep);
 }
@@ -348,11 +353,11 @@
   border-bottom: none;
 }
 
-.chord-diagram.interactive .chord-diagram-cell:not(:disabled) {
+.chord-diagram.interactive .chord-diagram-cell {
   cursor: pointer;
 }
 
-.chord-diagram.interactive .chord-diagram-cell:not(:disabled):hover {
+.chord-diagram.interactive .chord-diagram-cell:hover {
   background: rgba(46, 139, 122, 0.1);
 }
 

@@ -109,8 +109,10 @@ export function ChordDiagram({
                 key={`nut-${label}`}
                 type="button"
                 className={`chord-diagram-nut ${isMute ? 'mute' : isOpen ? 'open' : 'fretted'}`}
-                disabled={!interactive}
+                tabIndex={interactive ? 0 : -1}
+                aria-disabled={!interactive}
                 onClick={(e) => {
+                  if (!interactive) return
                   e.stopPropagation()
                   handleNutClick(i)
                 }}
@@ -144,8 +146,10 @@ export function ChordDiagram({
                     key={`${label}-${fret}`}
                     type="button"
                     className={`chord-diagram-cell ${rowIdx === 0 && base === 1 ? 'first' : ''}`}
-                    disabled={!interactive}
+                    tabIndex={interactive ? 0 : -1}
+                    aria-disabled={!interactive}
                     onClick={(e) => {
+                      if (!interactive) return
                       e.stopPropagation()
                       handleCellClick(stringIdx, fret)
                     }}
