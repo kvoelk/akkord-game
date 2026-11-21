@@ -38,10 +38,24 @@ npm test          # theory unit tests (Vitest)
 npm run build     # Typecheck + Production-Build
 ```
 
+## Cloudflare Deploy
+
+Deploy läuft über **Cloudflare Workers** (Static Assets / SPA) im Account **Cursor Cloud Account** (früher Sofa Game).
+
+Ziel-URL: https://akkord-game.voelkslieder.com
+
+```bash
+npx wrangler login
+npm run deploy
+```
+
+`npm run deploy` baut die App und führt `wrangler deploy` aus (siehe `wrangler.jsonc`).
+
 ## Stack
 
 - Vite + React + TypeScript
 - reine Client-SPA, keine Backend-Abhängigkeit
+- Cloudflare Workers (Static Assets) für Hosting
 
 ## Lizenz
 
