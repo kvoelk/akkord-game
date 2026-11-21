@@ -15,7 +15,7 @@ export type ChordDiagramProps = {
   onSelect?: () => void
   selected?: boolean
   title?: string
-  /** Show absolute fret number beside the first row when base > 1. */
+  /** Show absolute fret number above the first fret column when base > 1. */
   showBaseFret?: boolean
   className?: string
 }
@@ -98,15 +98,34 @@ export function ChordDiagram({
       {title ? <p className="chord-diagram-title">{title}</p> : null}
 
       <div className="chord-diagram-body">
-        <div className="chord-diagram-nut-row" aria-hidden={!interactive}>
-          {STRING_LABELS.map((label, i) => {
-            const action = frets[i]!
-            const isMute = action === 'mute'
-            const isOpen = action === 'open' || action === 0
-            const marker = isMute ? 'X' : isOpen ? 'O' : '·'
-            return (
+        <div className="chord-diagram-header" aria-hidden={!(showBaseFret && base > 1)}>
+          <span className="chord-diagram-label-spacer" />
+          <span className="chord-diagram-nut-spacer" />
+          <div
+            className="chord-diagram-base-track"
+            style={{ '--frets': DIAGRAM_FRETS } as CSSProperties}
+          >
+            {showBaseFret && base > 1 ? (
+              <span className="chord-diagram-base" aria-label={`ab Bund ${base}`}>
+                {base}
+              </span>
+            ) : (
+              <span className="chord-diagram-base spacer" aria-hidden="true" />
+            )}
+          </div>
+        </div>
+
+        {STRING_LABELS.map((label, stringIdx) => {
+          const action = frets[stringIdx]!
+          const isMute = action === 'mute'
+          const isOpen = action === 'open' || action === 0
+          const marker = isMute ? 'X' : isOpen ? 'O' : '·'
+          return (
+            <div key={label} className="chord-diagram-string" data-string={label}>
+              <span className="chord-diagram-string-label" aria-hidden="true">
+                {label}
+              </span>
               <button
-                key={`nut-${label}`}
                 type="button"
                 className={`chord-diagram-nut ${isMute ? 'mute' : isOpen ? 'open' : 'fretted'}`}
                 tabIndex={interactive ? 0 : -1}
@@ -114,60 +133,40 @@ export function ChordDiagram({
                 onClick={(e) => {
                   if (!interactive) return
                   e.stopPropagation()
-                  handleNutClick(i)
+                  handleNutClick(stringIdx)
                 }}
                 aria-label={`${label}-Saite: ${isMute ? 'gedämpft' : isOpen ? 'leer' : `Bund ${action}`}`}
               >
                 {marker}
               </button>
-            )
-          })}
-        </div>
-
-        <div className="chord-diagram-grid-wrap">
-          {showBaseFret && base > 1 ? (
-            <span className="chord-diagram-base" aria-label={`ab Bund ${base}`}>
-              {base}
-            </span>
-          ) : (
-            <span className="chord-diagram-base spacer" aria-hidden="true" />
-          )}
-
-          <div
-            className={`chord-diagram-grid ${base === 1 ? 'with-nut' : ''}`}
-            style={{ '--strings': STRING_LABELS.length, '--frets': DIAGRAM_FRETS } as CSSProperties}
-          >
-            {fretRows.map((fret, rowIdx) =>
-              STRING_LABELS.map((label, stringIdx) => {
-                const action = frets[stringIdx]!
-                const hasDot = typeof action === 'number' && action === fret
-                return (
-                  <button
-                    key={`${label}-${fret}`}
-                    type="button"
-                    className={`chord-diagram-cell ${rowIdx === 0 && base === 1 ? 'first' : ''}`}
-                    tabIndex={interactive ? 0 : -1}
-                    aria-disabled={!interactive}
-                    onClick={(e) => {
-                      if (!interactive) return
-                      e.stopPropagation()
-                      handleCellClick(stringIdx, fret)
-                    }}
-                    aria-label={`${label}-Saite Bund ${fret}${hasDot ? ', gegriffen' : ''}`}
-                  >
-                    {hasDot ? <span className="chord-diagram-dot" /> : null}
-                  </button>
-                )
-              }),
-            )}
-          </div>
-        </div>
-
-        <div className="chord-diagram-string-labels" aria-hidden="true">
-          {STRING_LABELS.map((label) => (
-            <span key={label}>{label}</span>
-          ))}
-        </div>
+              <div
+                className={`chord-diagram-frets ${base === 1 ? 'with-nut' : ''}`}
+                style={{ '--frets': DIAGRAM_FRETS } as CSSProperties}
+              >
+                {fretRows.map((fret, colIdx) => {
+                  const hasDot = typeof action === 'number' && action === fret
+                  return (
+                    <button
+                      key={`${label}-${fret}`}
+                      type="button"
+                      className={`chord-diagram-cell ${colIdx === 0 && base === 1 ? 'first' : ''}`}
+                      tabIndex={interactive ? 0 : -1}
+                      aria-disabled={!interactive}
+                      onClick={(e) => {
+                        if (!interactive) return
+                        e.stopPropagation()
+                        handleCellClick(stringIdx, fret)
+                      }}
+                      aria-label={`${label}-Saite Bund ${fret}${hasDot ? ', gegriffen' : ''}`}
+                    >
+                      {hasDot ? <span className="chord-diagram-dot" /> : null}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

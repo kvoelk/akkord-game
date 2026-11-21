@@ -8,10 +8,10 @@ import {
 } from './theory'
 
 describe('NOTES', () => {
-  it('has 12 chromatic pitch classes ending on H', () => {
+  it('has 12 chromatic pitch classes ending on B', () => {
     expect(NOTES).toHaveLength(12)
     expect(NOTES[0]).toBe('C')
-    expect(NOTES[11]).toBe('H')
+    expect(NOTES[11]).toBe('B')
   })
 })
 
@@ -30,10 +30,11 @@ describe('normalizeNoteInput', () => {
     expect(normalizeNoteInput('Des')).toBe(1)
   })
 
-  it('handles German H/B', () => {
+  it('handles international B and German H/Bb aliases', () => {
+    expect(normalizeNoteInput('B')).toBe(11)
     expect(normalizeNoteInput('H')).toBe(11)
-    expect(normalizeNoteInput('B')).toBe(10)
     expect(normalizeNoteInput('Bb')).toBe(10)
+    expect(normalizeNoteInput('hes')).toBe(10)
   })
 
   it('is case-insensitive and trims', () => {
@@ -67,7 +68,7 @@ describe('triadNotes', () => {
 
 describe('noteAt', () => {
   it('wraps negative and large semitones', () => {
-    expect(noteAt(-1)).toBe('H')
+    expect(noteAt(-1)).toBe('B')
     expect(noteAt(12)).toBe('C')
   })
 })

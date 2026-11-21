@@ -1,4 +1,4 @@
-/** Chromatic note names in German spelling (H = B natural). */
+/** Chromatic note names (international B; German H accepted as alias). */
 export const NOTES = [
   'C',
   'Cis',
@@ -11,7 +11,7 @@ export const NOTES = [
   'Gis',
   'A',
   'Ais',
-  'H',
+  'B',
 ] as const
 
 export type NoteName = (typeof NOTES)[number]
@@ -52,8 +52,8 @@ const ALIASES: Record<string, number> = {
   a: 9,
   'a#': 10,
   ais: 10,
-  // German: B = B♭, H = B♮
-  b: 10,
+  // International B = B♮; German H kept as alias. Bb/hes = B♭.
+  b: 11,
   bb: 10,
   hes: 10,
   h: 11,
@@ -75,7 +75,7 @@ function stripAccidentalsNoise(raw: string): string {
 
 /**
  * Parse free-form note input (English or German) into a pitch-class index 0–11.
- * Accepts e.g. C#, Cis, Db/Des, H, B (German B♭).
+ * Accepts e.g. C#, Cis, Db/Des, B/H (B♮), Bb/hes (B♭).
  */
 export function normalizeNoteInput(input: string): number | null {
   const key = stripAccidentalsNoise(input)

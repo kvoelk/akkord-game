@@ -20,7 +20,7 @@ describe('suggestStart', () => {
   })
 
   it('keeps the suggested root fret inside the 5-fret window', () => {
-    for (const root of ['C', 'D', 'E', 'F', 'G', 'A', 'H', 'Cis', 'Fis'] as const) {
+    for (const root of ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'Cis', 'Fis'] as const) {
       const start = suggestStart(root)
       const rootPc = noteIndex(root)
       const openA = 9

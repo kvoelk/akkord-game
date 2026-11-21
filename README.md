@@ -29,8 +29,8 @@ Vite/React-Übung für **Dur- und Moll-Dreiklänge**. Die App heißt *akkord-gam
 | Eingabe | Bedeutung |
 |---------|-----------|
 | `C#`, `Cis`, `Db`, `Des` | C♯ / D♭ |
-| `H` | H (engl. B) |
-| `B`, `Bb` | B (engl. B♭) |
+| `B`, `H` | B (deutsch H) |
+| `Bb`, `hes` | B♭ |
 
 ## Entwickeln
 

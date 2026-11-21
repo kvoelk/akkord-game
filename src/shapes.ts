@@ -22,8 +22,8 @@ export type ChordShape = {
   frets: ShapeFrets
 }
 
-/** German string labels, high (thin) → low (thick). */
-export const STRING_LABELS = ['e', 'H', 'G', 'D', 'A', 'E'] as const
+/** String labels, high (thin) → low (thick): e B G D A E. */
+export const STRING_LABELS = ['e', 'B', 'G', 'D', 'A', 'E'] as const
 
 export const CHORD_SHAPES: readonly ChordShape[] = [
   // ——— Offene Dur ———
@@ -70,8 +70,8 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     frets: [0, 2, 2, 2, 0, 'mute'],
   },
   {
-    id: 'H-barre2',
-    root: 'H',
+    id: 'B-barre2',
+    root: 'B',
     quality: 'dur',
     label: 'Barré 2',
     frets: [2, 4, 4, 4, 2, 'mute'],

@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { noteAt, noteIndex, type NoteName } from './theory'
 
-/** German string labels, high (thin) → low (thick). */
-const STRING_LABELS = ['e', 'H', 'G', 'D', 'A', 'E'] as const
+/** String labels, high (thin) → low (thick): e B G D A E. */
+const STRING_LABELS = ['e', 'B', 'G', 'D', 'A', 'E'] as const
 
 /** Open-string pitch classes matching STRING_LABELS. */
 const OPEN_PCS = [4, 11, 7, 2, 9, 4] as const

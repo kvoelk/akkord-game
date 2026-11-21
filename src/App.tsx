@@ -223,7 +223,7 @@ function ToenePanel() {
     const f = normalizeNoteInput(fifth)
     if (t === null || f === null) {
       setFeedback('fail')
-      setMessage('Bitte Terz und Quinte eingeben (z. B. E, Gis, Cis, Db, H).')
+      setMessage('Bitte Terz und Quinte eingeben (z. B. E, Gis, Cis, Db, B).')
       return
     }
     const ok =
