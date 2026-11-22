@@ -112,6 +112,72 @@ export function qualityLabel(quality: ChordQuality): string {
   return quality === 'dur' ? 'Dur' : 'Moll'
 }
 
+/** Triad scale degree: 1 = root, 3 = third, 5 = fifth. */
+export type TriadDegree = 1 | 3 | 5
+
+/**
+ * Return which triad degree a note is relative to root + quality, or null
+ * when the pitch class is not a chord tone.
+ */
+export function triadDegree(
+  note: NoteName | string,
+  root: NoteName | string,
+  quality: ChordQuality,
+): TriadDegree | null {
+  const notePc =
+    typeof note === 'string' && (NOTES as readonly string[]).includes(note)
+      ? noteIndex(note as NoteName)
+      : normalizeNoteInput(String(note))
+  if (notePc === null || notePc < 0) return null
+
+  const [r, t, f] = triadNotes(root, quality)
+  const rootPc = noteIndex(r)
+  const thirdPc = noteIndex(t)
+  const fifthPc = noteIndex(f)
+  if (notePc === rootPc) return 1
+  if (notePc === thirdPc) return 3
+  if (notePc === fifthPc) return 5
+  return null
+}
+
+/** Glyph for a triad degree in Grifftabelle diagrams (▲ / 3 / 5). */
+export function degreeGlyph(degree: TriadDegree | null | undefined): string {
+  if (degree === 1) return '▲'
+  if (degree === 3) return '3'
+  if (degree === 5) return '5'
+  return ''
+}
+
+const ROMAN_TABLE: ReadonlyArray<readonly [number, string]> = [
+  [1000, 'M'],
+  [900, 'CM'],
+  [500, 'D'],
+  [400, 'CD'],
+  [100, 'C'],
+  [90, 'XC'],
+  [50, 'L'],
+  [40, 'XL'],
+  [10, 'X'],
+  [9, 'IX'],
+  [5, 'V'],
+  [4, 'IV'],
+  [1, 'I'],
+]
+
+/** Convert a positive integer to uppercase Roman numerals (e.g. 4 → "IV"). */
+export function toRoman(n: number): string {
+  if (!Number.isInteger(n) || n <= 0) return ''
+  let rest = n
+  let out = ''
+  for (const [value, numeral] of ROMAN_TABLE) {
+    while (rest >= value) {
+      out += numeral
+      rest -= value
+    }
+  }
+  return out
+}
+
 export function randomRoot(): NoteName {
   return NOTES[Math.floor(Math.random() * NOTES.length)]!
 }

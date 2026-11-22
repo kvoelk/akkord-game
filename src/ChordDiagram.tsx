@@ -6,6 +6,13 @@ import {
   type FingerNumber,
   type StringAction,
 } from './shapes'
+import {
+  degreeGlyph,
+  toRoman,
+  triadDegree,
+  type ChordQuality,
+  type NoteName,
+} from './theory'
 
 const DIAGRAM_FRETS = 4
 
@@ -13,14 +20,16 @@ export type ChordDiagramProps = {
   value: readonly StringAction[]
   /** Optional finger numbers (1–4) parallel to value; shown inside fretted dots. */
   fingers?: readonly FingerNumber[]
+  /** Chord root — enables interval column (▲ / 3 / 5). */
+  root?: NoteName
+  /** Chord quality — enables interval column (▲ / 3 / 5). */
+  quality?: ChordQuality
   /** When set, the diagram is interactive. */
   onChange?: (next: StringAction[]) => void
   /** Quiz-card selection (click anywhere on the card). */
   onSelect?: () => void
   selected?: boolean
   title?: string
-  /** Show absolute fret number above the first fret column when base > 1. */
-  showBaseFret?: boolean
   className?: string
 }
 
@@ -38,17 +47,19 @@ function cycleString(current: StringAction, base: number): StringAction {
 export function ChordDiagram({
   value,
   fingers,
+  root,
+  quality,
   onChange,
   onSelect,
   selected,
   title,
-  showBaseFret = true,
   className,
 }: ChordDiagramProps) {
   const frets = value.length === 6 ? value : (['mute', 'mute', 'mute', 'mute', 'mute', 'mute'] as StringAction[])
   const base = diagramBaseFret(frets)
   const interactive = Boolean(onChange)
   const fretRows = Array.from({ length: DIAGRAM_FRETS }, (_, i) => base + i)
+  const showIntervals = root != null && quality != null
 
   function setString(index: number, action: StringAction) {
     if (!onChange) return
@@ -73,6 +84,7 @@ export function ChordDiagram({
 
   const rootClass = [
     'chord-diagram',
+    'griifftabelle',
     interactive ? 'interactive' : undefined,
     onSelect ? 'selectable' : undefined,
     selected ? 'selected' : undefined,
@@ -103,34 +115,25 @@ export function ChordDiagram({
       {title ? <p className="chord-diagram-title">{title}</p> : null}
 
       <div className="chord-diagram-body">
-        <div className="chord-diagram-header" aria-hidden={!(showBaseFret && base > 1)}>
-          <span className="chord-diagram-label-spacer" />
-          <span className="chord-diagram-nut-spacer" />
-          <div
-            className="chord-diagram-base-track"
-            style={{ '--frets': DIAGRAM_FRETS } as CSSProperties}
-          >
-            {showBaseFret && base > 1 ? (
-              <span className="chord-diagram-base" aria-label={`ab Bund ${base}`}>
-                {base}
-              </span>
-            ) : (
-              <span className="chord-diagram-base spacer" aria-hidden="true" />
-            )}
-          </div>
-          <span className="chord-diagram-note-spacer" />
-        </div>
-
         {STRING_LABELS.map((label, stringIdx) => {
           const action = frets[stringIdx]!
           const isMute = action === 'mute'
           const isOpen = action === 'open' || action === 0
           const marker = isMute ? 'X' : isOpen ? 'O' : '·'
           const note = noteForStringAction(stringIdx, action)
+          const degree =
+            showIntervals && note != null ? triadDegree(note, root, quality) : null
+          const interval = degreeGlyph(degree)
           return (
             <div key={label} className="chord-diagram-string" data-string={label}>
-              <span className="chord-diagram-string-label" aria-hidden="true">
-                {label}
+              <span
+                className={`chord-diagram-interval${interval ? '' : ' empty'}${
+                  degree === 1 ? ' root' : degree === 3 ? ' third' : degree === 5 ? ' fifth' : ''
+                }`}
+                aria-hidden="true"
+                title={label}
+              >
+                {interval}
               </span>
               <button
                 type="button"
@@ -186,6 +189,22 @@ export function ChordDiagram({
             </div>
           )
         })}
+
+        <div className="chord-diagram-footer" aria-label="Bundnummern">
+          <span className="chord-diagram-interval-spacer" aria-hidden="true" />
+          <span className="chord-diagram-nut-spacer" aria-hidden="true" />
+          <div
+            className="chord-diagram-footer-track"
+            style={{ '--frets': DIAGRAM_FRETS } as CSSProperties}
+          >
+            {fretRows.map((fret) => (
+              <span key={fret} className="chord-diagram-roman">
+                {toRoman(fret)}
+              </span>
+            ))}
+          </div>
+          <span className="chord-diagram-note-spacer" aria-hidden="true" />
+        </div>
       </div>
     </div>
   )

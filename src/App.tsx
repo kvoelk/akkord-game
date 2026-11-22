@@ -156,6 +156,8 @@ function LearnPanel() {
                 <ChordDiagram
                   value={shape.frets}
                   fingers={shape.fingers}
+                  root={shape.root}
+                  quality={shape.quality}
                   title={lageLabel(shape)}
                 />
               </div>
@@ -512,7 +514,13 @@ function GreifenPanel() {
 
       {level === 'saiten' ? (
         <>
-          <ChordDiagram value={guess} onChange={setGuess} title="Dein Griff" />
+          <ChordDiagram
+            value={guess}
+            onChange={setGuess}
+            root={saiten.shape.root}
+            quality={saiten.shape.quality}
+            title="Dein Griff"
+          />
           <div className="actions">
             <button type="button" className="primary" onClick={checkSaiten}>
               Prüfen
@@ -529,6 +537,8 @@ function GreifenPanel() {
               <ChordDiagram
                 value={saiten.shape.frets}
                 fingers={saiten.shape.fingers}
+                root={saiten.shape.root}
+                quality={saiten.shape.quality}
                 title={lageLabel(saiten.shape)}
               />
             </div>
@@ -541,6 +551,9 @@ function GreifenPanel() {
               <div key={opt.id} className="lage-option" role="listitem">
                 <ChordDiagram
                   value={opt.frets}
+                  fingers={opt.fingers}
+                  root={opt.root}
+                  quality={opt.quality}
                   title={`Variante ${idx + 1}`}
                   onSelect={() => {
                     setPicked(opt.id)

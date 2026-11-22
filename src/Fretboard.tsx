@@ -1,5 +1,12 @@
-import { useState } from 'react'
-import { noteAt, noteIndex, type NoteName } from './theory'
+import { useState, type CSSProperties } from 'react'
+import {
+  degreeGlyph,
+  noteAt,
+  noteIndex,
+  toRoman,
+  type NoteName,
+  type TriadDegree,
+} from './theory'
 
 /** String labels, high (thin) → low (thick): e B G D A E. */
 const STRING_LABELS = ['e', 'B', 'G', 'D', 'A', 'E'] as const
@@ -47,7 +54,13 @@ function clampStart(n: number): number {
 
 type MarkerRole = 'root' | 'third' | 'fifth'
 
-function roleAt(stringIdx: number, fret: number, rootPc: number, thirdPc: number, fifthPc: number): MarkerRole | null {
+function roleAt(
+  stringIdx: number,
+  fret: number,
+  rootPc: number,
+  thirdPc: number,
+  fifthPc: number,
+): MarkerRole | null {
   const pc = (OPEN_PCS[stringIdx]! + fret) % 12
   if (pc === rootPc) return 'root'
   if (pc === thirdPc) return 'third'
@@ -67,7 +80,7 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
   }
 
   return (
-    <div className="fretboard" aria-label={title ?? 'Griffbrett'}>
+    <div className="fretboard griifftabelle" aria-label={title ?? 'Griffbrett'}>
       {title ? <p className="fretboard-title">{title}</p> : null}
 
       <div className="fretboard-nav">
@@ -80,11 +93,9 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
         >
           ←
         </button>
-        <ol className="fretboard-numbers" aria-label="Bundnummern">
-          {frets.map((f) => (
-            <li key={f}>{f === 0 ? '0' : f}</li>
-          ))}
-        </ol>
+        <span className="fretboard-nav-label" aria-hidden="true">
+          {start === 0 ? 'offen' : `ab ${toRoman(start)}`}
+        </span>
         <button
           type="button"
           className="fretboard-shift"
@@ -96,32 +107,37 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
         </button>
       </div>
 
-      <div className="fretboard-grid" role="img" aria-label={`Dreiklang ${root} ${third} ${fifth}`}>
+      <div
+        className="chord-diagram-body fretboard-body"
+        role="img"
+        aria-label={`Dreiklang ${root} ${third} ${fifth}`}
+        style={{ '--frets': WINDOW } as CSSProperties}
+      >
         {STRING_LABELS.map((label, stringIdx) => (
-          <div key={label + stringIdx} className="fretboard-string" data-string={label}>
-            <span className="fretboard-string-label">{label}</span>
-            <div className="fretboard-frets">
-              {frets.map((fret) => {
+          <div key={label + stringIdx} className="chord-diagram-string fretboard-string" data-string={label}>
+            <span className="chord-diagram-string-label">{label}</span>
+            <div
+              className={`chord-diagram-frets fretboard-frets ${start === 0 ? 'with-nut' : ''}`}
+              style={{ '--frets': WINDOW } as CSSProperties}
+            >
+              {frets.map((fret, colIdx) => {
                 const role = roleAt(stringIdx, fret, rootPc, thirdPc, fifthPc)
-                const showNut = start === 0 && fret === 0
                 const note = noteAt((OPEN_PCS[stringIdx]! + fret) % 12)
+                const degree: TriadDegree | null =
+                  role === 'root' ? 1 : role === 'third' ? 3 : role === 'fifth' ? 5 : null
+                const glyph = degreeGlyph(degree)
                 return (
                   <div
                     key={fret}
-                    className={showNut ? 'fretboard-cell nut' : 'fretboard-cell'}
+                    className={`chord-diagram-cell fretboard-cell${colIdx === 0 && start === 0 ? ' first' : ''}`}
                     data-fret={fret}
                   >
-                    <span
-                      className={showNut ? 'fretboard-line nut-line' : 'fretboard-line'}
-                      aria-hidden="true"
-                    />
                     {role ? (
                       <span
-                        className={`fretboard-mark ${role}`}
+                        className={`fretboard-degree ${role}`}
                         title={`${note} (${roleLabel(role)})`}
                       >
-                        <span className="fretboard-mark-shape" aria-hidden="true" />
-                        <span className="fretboard-mark-note">{note}</span>
+                        {glyph}
                       </span>
                     ) : null}
                   </div>
@@ -130,24 +146,38 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
             </div>
           </div>
         ))}
+
+        <div className="chord-diagram-footer fretboard-footer" aria-label="Bundnummern">
+          <span className="chord-diagram-label-spacer" aria-hidden="true" />
+          <div
+            className="chord-diagram-footer-track"
+            style={{ '--frets': WINDOW } as CSSProperties}
+          >
+            {frets.map((fret) => (
+              <span key={fret} className="chord-diagram-roman">
+                {fret === 0 ? '·' : toRoman(fret)}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
 
       <ul className="fretboard-legend" aria-label="Legende">
         <li>
-          <span className="fretboard-mark root legend-swatch" aria-hidden="true">
-            <span className="fretboard-mark-shape" />
+          <span className="fretboard-degree root legend-swatch" aria-hidden="true">
+            ▲
           </span>
           Grundton (1)
         </li>
         <li>
-          <span className="fretboard-mark third legend-swatch" aria-hidden="true">
-            <span className="fretboard-mark-shape" />
+          <span className="fretboard-degree third legend-swatch" aria-hidden="true">
+            3
           </span>
           Terz (3)
         </li>
         <li>
-          <span className="fretboard-mark fifth legend-swatch" aria-hidden="true">
-            <span className="fretboard-mark-shape" />
+          <span className="fretboard-degree fifth legend-swatch" aria-hidden="true">
+            5
           </span>
           Quinte (5)
         </li>
