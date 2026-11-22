@@ -252,7 +252,7 @@
 .chord-diagram-header,
 .chord-diagram-string {
   display: grid;
-  grid-template-columns: 1.1rem 1.15rem auto;
+  grid-template-columns: 1.1rem 1.15rem auto 1.55rem;
   align-items: center;
   column-gap: 0.15rem;
 }
@@ -263,8 +263,21 @@
 }
 
 .chord-diagram-label-spacer,
-.chord-diagram-nut-spacer {
+.chord-diagram-nut-spacer,
+.chord-diagram-note-spacer {
   display: block;
+}
+
+.chord-diagram-note {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1;
+}
+
+.chord-diagram-note.empty {
+  visibility: hidden;
 }
 
 .chord-diagram-base-track {

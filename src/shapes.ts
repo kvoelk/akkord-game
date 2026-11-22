@@ -1,4 +1,4 @@
-import type { ChordQuality, NoteName } from './theory'
+import { noteAt, type ChordQuality, type NoteName } from './theory'
 
 /** Per-string action: mute (X), open (O), or fretted finger position. */
 export type StringAction = 'mute' | 'open' | number
@@ -39,6 +39,21 @@ export type ChordShape = {
 
 /** String labels, high (thin) → low (thick): e B G D A E. */
 export const STRING_LABELS = ['e', 'B', 'G', 'D', 'A', 'E'] as const
+
+/** Open-string pitch classes matching STRING_LABELS (high e → low E). */
+export const OPEN_STRING_PCS = [4, 11, 7, 2, 9, 4] as const
+
+/** Sounding note for a string action, or null when muted. */
+export function noteForStringAction(
+  stringIdx: number,
+  action: StringAction,
+): NoteName | null {
+  if (action === 'mute') return null
+  const openPc = OPEN_STRING_PCS[stringIdx]
+  if (openPc === undefined) return null
+  if (action === 'open' || action === 0) return noteAt(openPc)
+  return noteAt(openPc + action)
+}
 
 export const CHORD_SHAPES: readonly ChordShape[] = [
   // ——— Offene Dur ———

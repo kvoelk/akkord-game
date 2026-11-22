@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import {
   STRING_LABELS,
   diagramBaseFret,
+  noteForStringAction,
   type FingerNumber,
   type StringAction,
 } from './shapes'
@@ -117,6 +118,7 @@ export function ChordDiagram({
               <span className="chord-diagram-base spacer" aria-hidden="true" />
             )}
           </div>
+          <span className="chord-diagram-note-spacer" />
         </div>
 
         {STRING_LABELS.map((label, stringIdx) => {
@@ -124,6 +126,7 @@ export function ChordDiagram({
           const isMute = action === 'mute'
           const isOpen = action === 'open' || action === 0
           const marker = isMute ? 'X' : isOpen ? 'O' : '·'
+          const note = noteForStringAction(stringIdx, action)
           return (
             <div key={label} className="chord-diagram-string" data-string={label}>
               <span className="chord-diagram-string-label" aria-hidden="true">
@@ -174,6 +177,12 @@ export function ChordDiagram({
                   )
                 })}
               </div>
+              <span
+                className={`chord-diagram-note${note == null ? ' empty' : ''}`}
+                aria-hidden="true"
+              >
+                {note ?? ''}
+              </span>
             </div>
           )
         })}

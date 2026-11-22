@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   CHORD_SHAPES,
   emptyGuess,
+  noteForStringAction,
   shapesEqual,
   shapesFor,
 } from './shapes'
@@ -36,6 +37,12 @@ describe('CHORD_SHAPES', () => {
 
     const aForm = CHORD_SHAPES.find((s) => s.id === 'C-A-form3')!
     expect(aForm.fingers).toEqual([1, 4, 3, 2, 1, null])
+  })
+
+  it('maps open C frets to sounding notes E,C,G,E,C,null', () => {
+    const cOpen = CHORD_SHAPES.find((s) => s.id === 'C-open')!
+    const notes = cOpen.frets.map((action, i) => noteForStringAction(i, action))
+    expect(notes).toEqual(['E', 'C', 'G', 'E', 'C', null])
   })
 })
 
