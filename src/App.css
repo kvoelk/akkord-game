@@ -205,11 +205,37 @@
   --cd-ink: var(--ink);
   --cd-accent: var(--accent);
   --cd-line: rgba(28, 48, 42, 0.35);
+  --cd-string: 1.5px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   gap: 0.35rem;
   user-select: none;
+}
+
+/* String thickness: high e thin → low E thick */
+.chord-diagram-string[data-string='e'] {
+  --cd-string: 1px;
+}
+
+.chord-diagram-string[data-string='B'] {
+  --cd-string: 1.25px;
+}
+
+.chord-diagram-string[data-string='G'] {
+  --cd-string: 1.5px;
+}
+
+.chord-diagram-string[data-string='D'] {
+  --cd-string: 1.75px;
+}
+
+.chord-diagram-string[data-string='A'] {
+  --cd-string: 2px;
+}
+
+.chord-diagram-string[data-string='E'] {
+  --cd-string: 2.5px;
 }
 
 .chord-diagram.selectable {
@@ -381,26 +407,32 @@
 }
 
 .chord-diagram-frets {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(var(--frets, 4), 1.55rem);
   grid-template-rows: 1.35rem;
-  border-top: 1.5px solid var(--cd-line);
+  min-height: 1.35rem;
   border-right: 1.5px solid var(--cd-line);
-  border-bottom: 1.5px solid var(--cd-line);
   background: linear-gradient(var(--cd-line), var(--cd-line)) left top / 1.5px 100% no-repeat;
+}
+
+/* Horizontal string line through the middle of each fret row */
+.chord-diagram-frets::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--cd-string);
+  margin-top: calc(var(--cd-string) / -2);
+  background: var(--cd-ink);
+  pointer-events: none;
+  z-index: 1;
 }
 
 .chord-diagram-frets.with-nut {
   border-left: 4px solid var(--cd-ink);
   background: none;
-}
-
-.chord-diagram-string:last-child .chord-diagram-frets {
-  border-bottom: 1.5px solid var(--cd-line);
-}
-
-.chord-diagram-string:not(:last-child) .chord-diagram-frets {
-  border-bottom: none;
 }
 
 .chord-diagram-cell {
@@ -429,6 +461,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 2;
   width: 0.72rem;
   height: 0.72rem;
   margin: -0.36rem 0 0 -0.36rem;
@@ -525,6 +558,7 @@
 
 .fretboard.griifftabelle .chord-diagram-frets {
   grid-template-rows: 1.85rem;
+  min-height: 1.85rem;
 }
 
 .fretboard.griifftabelle .chord-diagram-cell {
