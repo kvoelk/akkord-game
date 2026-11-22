@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import {
   STRING_LABELS,
   diagramBaseFret,
+  type FingerNumber,
   type StringAction,
 } from './shapes'
 
@@ -9,6 +10,8 @@ const DIAGRAM_FRETS = 4
 
 export type ChordDiagramProps = {
   value: readonly StringAction[]
+  /** Optional finger numbers (1–4) parallel to value; shown inside fretted dots. */
+  fingers?: readonly FingerNumber[]
   /** When set, the diagram is interactive. */
   onChange?: (next: StringAction[]) => void
   /** Quiz-card selection (click anywhere on the card). */
@@ -33,6 +36,7 @@ function cycleString(current: StringAction, base: number): StringAction {
 
 export function ChordDiagram({
   value,
+  fingers,
   onChange,
   onSelect,
   selected,
@@ -145,6 +149,8 @@ export function ChordDiagram({
               >
                 {fretRows.map((fret, colIdx) => {
                   const hasDot = typeof action === 'number' && action === fret
+                  const finger = fingers?.[stringIdx] ?? null
+                  const showFinger = hasDot && finger != null
                   return (
                     <button
                       key={`${label}-${fret}`}
@@ -157,9 +163,13 @@ export function ChordDiagram({
                         e.stopPropagation()
                         handleCellClick(stringIdx, fret)
                       }}
-                      aria-label={`${label}-Saite Bund ${fret}${hasDot ? ', gegriffen' : ''}`}
+                      aria-label={`${label}-Saite Bund ${fret}${hasDot ? ', gegriffen' : ''}${showFinger ? `, Finger ${finger}` : ''}`}
                     >
-                      {hasDot ? <span className="chord-diagram-dot" /> : null}
+                      {hasDot ? (
+                        <span className={`chord-diagram-dot${showFinger ? ' numbered' : ''}`}>
+                          {showFinger ? finger : null}
+                        </span>
+                      ) : null}
                     </button>
                   )
                 })}

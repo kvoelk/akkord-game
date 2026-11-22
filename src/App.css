@@ -388,6 +388,19 @@
   border-radius: 50%;
   background: var(--cd-ink);
   box-shadow: 0 0 0 1px rgba(255, 252, 247, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.chord-diagram-dot.numbered {
+  width: 0.92rem;
+  height: 0.92rem;
+  margin: -0.46rem 0 0 -0.46rem;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: #fff;
 }
 
 /* ——— Griffbrett ——— */

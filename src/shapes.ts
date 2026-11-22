@@ -3,6 +3,9 @@ import type { ChordQuality, NoteName } from './theory'
 /** Per-string action: mute (X), open (O), or fretted finger position. */
 export type StringAction = 'mute' | 'open' | number
 
+/** Finger number 1–4, or null for mute / open strings. */
+export type FingerNumber = 1 | 2 | 3 | 4 | null
+
 /** High e → low E (six entries). */
 export type ShapeFrets = readonly [
   StringAction,
@@ -13,6 +16,16 @@ export type ShapeFrets = readonly [
   StringAction,
 ]
 
+/** High e → low E (six entries), parallel to frets. */
+export type ShapeFingers = readonly [
+  FingerNumber,
+  FingerNumber,
+  FingerNumber,
+  FingerNumber,
+  FingerNumber,
+  FingerNumber,
+]
+
 export type ChordShape = {
   id: string
   root: NoteName
@@ -20,6 +33,8 @@ export type ChordShape = {
   /** Short display label, e.g. "offen", "Barré 1", "A-Form 3". */
   label: string
   frets: ShapeFrets
+  /** Finger numbers parallel to frets (null = mute/open). */
+  fingers: ShapeFingers
 }
 
 /** String labels, high (thin) → low (thick): e B G D A E. */
@@ -33,6 +48,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'offen',
     frets: [0, 1, 0, 2, 3, 'mute'],
+    fingers: [null, 1, null, 2, 3, null],
   },
   {
     id: 'D-open',
@@ -40,6 +56,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'offen',
     frets: [2, 3, 2, 0, 'mute', 'mute'],
+    fingers: [2, 3, 1, null, null, null],
   },
   {
     id: 'E-open',
@@ -47,6 +64,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'offen',
     frets: [0, 0, 1, 2, 2, 0],
+    fingers: [null, null, 1, 3, 2, null],
   },
   {
     id: 'F-barre1',
@@ -54,6 +72,8 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'Barré 1',
     frets: [1, 1, 2, 3, 3, 1],
+    // E-form barre: 1 on barre strings, 2 on G, 3 on A, 4 on D
+    fingers: [1, 1, 2, 4, 3, 1],
   },
   {
     id: 'G-open',
@@ -61,6 +81,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'offen',
     frets: [3, 0, 0, 0, 2, 3],
+    fingers: [4, null, null, null, 2, 3],
   },
   {
     id: 'A-open',
@@ -68,6 +89,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'offen',
     frets: [0, 2, 2, 2, 0, 'mute'],
+    fingers: [null, 3, 2, 1, null, null],
   },
   {
     id: 'B-barre2',
@@ -75,6 +97,8 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'Barré 2',
     frets: [2, 4, 4, 4, 2, 'mute'],
+    // A-form barre: 1 on barre strings, 2/3/4 on D/G/B
+    fingers: [1, 4, 3, 2, 1, null],
   },
 
   // ——— Offene Moll ———
@@ -84,6 +108,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'moll',
     label: 'offen',
     frets: [0, 1, 2, 2, 0, 'mute'],
+    fingers: [null, 1, 3, 2, null, null],
   },
   {
     id: 'Dm-open',
@@ -91,6 +116,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'moll',
     label: 'offen',
     frets: [1, 3, 2, 0, 'mute', 'mute'],
+    fingers: [1, 3, 2, null, null, null],
   },
   {
     id: 'Em-open',
@@ -98,6 +124,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'moll',
     label: 'offen',
     frets: [0, 0, 0, 2, 2, 0],
+    fingers: [null, null, null, 3, 2, null],
   },
 
   // ——— Mittlere Lagen ———
@@ -107,6 +134,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'A-Form 3',
     frets: [3, 5, 5, 5, 3, 'mute'],
+    fingers: [1, 4, 3, 2, 1, null],
   },
   {
     id: 'D-A-form5',
@@ -114,6 +142,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'A-Form 5',
     frets: [5, 7, 7, 7, 5, 'mute'],
+    fingers: [1, 4, 3, 2, 1, null],
   },
   {
     id: 'G-E-form3',
@@ -121,6 +150,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'E-Form 3',
     frets: [3, 3, 4, 5, 5, 3],
+    fingers: [1, 1, 2, 4, 3, 1],
   },
   {
     id: 'A-E-form5',
@@ -128,6 +158,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'E-Form 5',
     frets: [5, 5, 6, 7, 7, 5],
+    fingers: [1, 1, 2, 4, 3, 1],
   },
   {
     id: 'Cm-A-form3',
@@ -135,6 +166,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'moll',
     label: 'A-Form 3',
     frets: [3, 4, 5, 5, 3, 'mute'],
+    fingers: [1, 2, 4, 3, 1, null],
   },
   {
     id: 'Am-E-form5',
@@ -142,6 +174,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'moll',
     label: 'E-Form 5',
     frets: [5, 5, 5, 7, 7, 5],
+    fingers: [1, 1, 1, 3, 4, 1],
   },
 
   // ——— Hohe Lagen ———
@@ -151,6 +184,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'A-Form 15',
     frets: [15, 17, 17, 17, 15, 'mute'],
+    fingers: [1, 4, 3, 2, 1, null],
   },
   {
     id: 'E-A-form7',
@@ -158,6 +192,7 @@ export const CHORD_SHAPES: readonly ChordShape[] = [
     quality: 'dur',
     label: 'A-Form 7',
     frets: [7, 9, 9, 9, 7, 'mute'],
+    fingers: [1, 4, 3, 2, 1, null],
   },
 ]
 

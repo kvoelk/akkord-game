@@ -13,6 +13,30 @@ describe('CHORD_SHAPES', () => {
     expect(cOpen!.frets).toEqual([0, 1, 0, 2, 3, 'mute'])
     expect(shapesFor('C', 'dur').some((s) => s.id === 'C-open')).toBe(true)
   })
+
+  it('assigns finger 1–4 on fretted strings and null on mute/open', () => {
+    for (const shape of CHORD_SHAPES) {
+      expect(shape.fingers).toHaveLength(6)
+      expect(shape.fingers).toHaveLength(shape.frets.length)
+      for (let i = 0; i < 6; i++) {
+        const fret = shape.frets[i]!
+        const finger = shape.fingers[i]!
+        if (fret === 'mute' || fret === 'open' || fret === 0) {
+          expect(finger).toBeNull()
+        } else {
+          expect([1, 2, 3, 4]).toContain(finger)
+        }
+      }
+    }
+  })
+
+  it('uses standard C-open and A-form barre fingerings', () => {
+    const cOpen = CHORD_SHAPES.find((s) => s.id === 'C-open')!
+    expect(cOpen.fingers).toEqual([null, 1, null, 2, 3, null])
+
+    const aForm = CHORD_SHAPES.find((s) => s.id === 'C-A-form3')!
+    expect(aForm.fingers).toEqual([1, 4, 3, 2, 1, null])
+  })
 })
 
 describe('shapesEqual', () => {

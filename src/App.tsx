@@ -153,7 +153,11 @@ function LearnPanel() {
           <div className="shape-gallery" role="list" aria-label="Griffvarianten">
             {shapes.map((shape) => (
               <div key={shape.id} className="shape-card" role="listitem">
-                <ChordDiagram value={shape.frets} title={lageLabel(shape)} />
+                <ChordDiagram
+                  value={shape.frets}
+                  fingers={shape.fingers}
+                  title={lageLabel(shape)}
+                />
               </div>
             ))}
           </div>
@@ -522,7 +526,11 @@ function GreifenPanel() {
           </div>
           {feedback === 'ok' ? (
             <div className="shape-gallery reveal">
-              <ChordDiagram value={saiten.shape.frets} title={lageLabel(saiten.shape)} />
+              <ChordDiagram
+                value={saiten.shape.frets}
+                fingers={saiten.shape.fingers}
+                title={lageLabel(saiten.shape)}
+              />
             </div>
           ) : null}
         </>
