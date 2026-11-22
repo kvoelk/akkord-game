@@ -1,0 +1,17 @@
+Drop C# Tuning: C# G# C# F# A# D#  (Everlong-Griffe, Originaltonart)
+
+8-Takt-Geruest (passend zur Lead):
+  | C#m/C#5 | G#5 | Bsus2 | C#m | Esus2 | G#5 | B5 | C#5 |
+
+Power-Chord Griffe (Drop C#):
+  C#5:   0 0 0 x x x
+  C#m:   0 0 0 2 2 x     (oder sus2: 0 0 0 1 2 x  -> D# = 2nd)
+  E5:    3 3 3 x x x
+  Esus2: 3 3 3 5 3 x
+  G#5:   7 7 7 x x x
+  B5:    10 10 10 x x x
+  Bsus2: 10 10 10 9 10 x
+
+V1 Everlong-Dynamik: Takte 1-4 PM-Achtel, 5-8 offene Sus2-Schlaege
+V2 Pedal+Upper: tiefes C# als Bordun, Upper-Voicings wandern (E/D#/B/C#-Farbe)
+V3 Call-Response: Stop-Time, Synkopen, Gallop, Fill aus dem Lead-Motiv
