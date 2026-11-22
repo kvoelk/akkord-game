@@ -8,9 +8,10 @@ Vite/React-Übung für **Dur- und Moll-Dreiklänge**. Die App heißt *akkord-gam
 - Grundton wählen und zwischen **Dur** und **Moll** umschalten
 - Ansicht **Griff**: klassische Akkorddiagramme (offene Lagen, Barré, A-/E-Form)
 - Ansicht **Töne**: Dreiklangtöne auf Griffbrett und Notenpad
-- Stufen **1 / 3 / 5** mit Halbtonabständen:
-  - Dur: `0 / 4 / 7`
-  - Moll: `0 / 3 / 7`
+- Halbtonformeln statt Stufen **1 / 3 / 5**:
+  - Dur: `0·4·7`
+  - Moll: `0·3·7`
+- Griffbrett-Legende: Grundton (0), Terz (+4/+3), Quinte (+7)
 
 ### Töne
 - Zu einem vorgegebenen Grundton + Tongeschlecht Terz und Quinte eintragen

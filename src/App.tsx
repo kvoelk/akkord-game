@@ -17,6 +17,7 @@ import {
   TRIAD_INTERVALS,
   type ChordQuality,
   type NoteName,
+  intervalsFormula,
   normalizeNoteInput,
   qualityLabel,
   randomQuality,
@@ -173,25 +174,26 @@ function LearnPanel() {
             root={triad[0]}
             third={triad[1]}
             fifth={triad[2]}
-            title="Griffbrett — 1 · 3 · 5"
+            quality={quality}
+            title={`Griffbrett — ${intervalsFormula(quality)}`}
           />
 
           <NotePad
             highlighted={triadSet}
-            labels={Object.fromEntries(triad.map((n, i) => [n, String([1, 3, 5][i])]))}
+            labels={Object.fromEntries(triad.map((n, i) => [n, String(intervals[i])]))}
           />
 
           <ul className="degree-list">
             {[
-              { degree: 1, label: 'Grundton', note: triad[0], semis: intervals[0] },
-              { degree: 3, label: 'Terz', note: triad[1], semis: intervals[1] },
-              { degree: 5, label: 'Quinte', note: triad[2], semis: intervals[2] },
+              { semi: intervals[0], label: 'Grundton', note: triad[0] },
+              { semi: intervals[1], label: 'Terz', note: triad[1] },
+              { semi: intervals[2], label: 'Quinte', note: triad[2] },
             ].map((row) => (
-              <li key={row.degree}>
-                <span className="deg">{row.degree}</span>
+              <li key={row.semi}>
+                <span className="deg">{row.semi === 0 ? '0' : `+${row.semi}`}</span>
                 <span className="lbl">{row.label}</span>
                 <span className="nte">{row.note}</span>
-                <span className="semi">{row.semis} Halbtöne</span>
+                <span className="semi">{row.semi} Halbtöne</span>
               </li>
             ))}
           </ul>
@@ -243,7 +245,7 @@ function ToenePanel() {
       setStreak(0)
       setFeedback('fail')
       setMessage(
-        `Nicht ganz. Gesucht: Terz ${expected[1]}, Quinte ${expected[2]} (${intervalsHint(quality)}).`,
+        `Nicht ganz. Gesucht: Terz ${expected[1]}, Quinte ${expected[2]} (${intervalsFormula(quality)}).`,
       )
     }
   }
@@ -281,13 +283,12 @@ function ToenePanel() {
         <span className="challenge-quality">{qualityLabel(quality)}</span>
       </p>
       <p className="challenge-hint">
-        Intervalle: 1 → {TRIAD_INTERVALS[quality][0]}, 3 → {TRIAD_INTERVALS[quality][1]}, 5 →{' '}
-        {TRIAD_INTERVALS[quality][2]} Halbtöne
+        Formel: {intervalsFormula(quality)} Halbtöne
       </p>
 
       <div className="answer-fields">
         <label className="field" htmlFor={thirdId}>
-          <span>Terz (3)</span>
+          <span>Terz (+{TRIAD_INTERVALS[quality][1]})</span>
           <input
             id={thirdId}
             value={third}
@@ -298,7 +299,7 @@ function ToenePanel() {
           />
         </label>
         <label className="field" htmlFor={fifthId}>
-          <span>Quinte (5)</span>
+          <span>Quinte (+{TRIAD_INTERVALS[quality][2]})</span>
           <input
             id={fifthId}
             value={fifth}
@@ -333,6 +334,7 @@ function ToenePanel() {
           root={expected[0]}
           third={expected[1]}
           fifth={expected[2]}
+          quality={quality}
           title="Griffbrett — so liegt der Dreiklang"
         />
       ) : null}
@@ -582,11 +584,6 @@ function GreifenPanel() {
       ) : null}
     </section>
   )
-}
-
-function intervalsHint(quality: ChordQuality): string {
-  const [a, b, c] = TRIAD_INTERVALS[quality]
-  return `${a}/${b}/${c}`
 }
 
 type NotePadProps = {

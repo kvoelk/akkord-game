@@ -17,7 +17,7 @@ export const NOTES = [
 export type NoteName = (typeof NOTES)[number]
 export type ChordQuality = 'dur' | 'moll'
 
-/** Semitone offsets for triad degrees 1 / 3 / 5. */
+/** Semitone offsets from the root for triad tones (root / third / fifth). */
 export const TRIAD_INTERVALS: Record<ChordQuality, readonly [number, number, number]> = {
   dur: [0, 4, 7],
   moll: [0, 3, 7],
@@ -112,18 +112,20 @@ export function qualityLabel(quality: ChordQuality): string {
   return quality === 'dur' ? 'Dur' : 'Moll'
 }
 
-/** Triad scale degree: 1 = root, 3 = third, 5 = fifth. */
-export type TriadDegree = 1 | 3 | 5
+/** Semitone offset of a triad tone relative to the root: 0, 3|4, or 7. */
+export type TriadSemitone = 0 | 3 | 4 | 7
+
+export type SemitoneRole = 'root' | 'third' | 'fifth'
 
 /**
- * Return which triad degree a note is relative to root + quality, or null
+ * Return the semitone offset of a note relative to root + quality, or null
  * when the pitch class is not a chord tone.
  */
-export function triadDegree(
+export function triadSemitone(
   note: NoteName | string,
   root: NoteName | string,
   quality: ChordQuality,
-): TriadDegree | null {
+): TriadSemitone | null {
   const notePc =
     typeof note === 'string' && (NOTES as readonly string[]).includes(note)
       ? noteIndex(note as NoteName)
@@ -131,21 +133,35 @@ export function triadDegree(
   if (notePc === null || notePc < 0) return null
 
   const [r, t, f] = triadNotes(root, quality)
+  const [iRoot, iThird, iFifth] = TRIAD_INTERVALS[quality]
   const rootPc = noteIndex(r)
   const thirdPc = noteIndex(t)
   const fifthPc = noteIndex(f)
-  if (notePc === rootPc) return 1
-  if (notePc === thirdPc) return 3
-  if (notePc === fifthPc) return 5
+  if (notePc === rootPc) return iRoot as TriadSemitone
+  if (notePc === thirdPc) return iThird as TriadSemitone
+  if (notePc === fifthPc) return iFifth as TriadSemitone
   return null
 }
 
-/** Glyph for a triad degree in Grifftabelle diagrams (▲ / 3 / 5). */
-export function degreeGlyph(degree: TriadDegree | null | undefined): string {
-  if (degree === 1) return '▲'
-  if (degree === 3) return '3'
-  if (degree === 5) return '5'
+/** Glyph for a triad semitone in Grifftabelle diagrams (▲ / 3|4 / 7). */
+export function semitoneGlyph(semi: TriadSemitone | null | undefined): string {
+  if (semi === 0) return '▲'
+  if (semi === 3 || semi === 4 || semi === 7) return String(semi)
   return ''
+}
+
+/** Role of a triad semitone offset (root / third / fifth). */
+export function semitoneRole(semi: number | null | undefined): SemitoneRole | null {
+  if (semi === 0) return 'root'
+  if (semi === 3 || semi === 4) return 'third'
+  if (semi === 7) return 'fifth'
+  return null
+}
+
+/** Compact formula string, e.g. "0·4·7" (Dur) or "0·3·7" (Moll). */
+export function intervalsFormula(quality: ChordQuality): string {
+  const [a, b, c] = TRIAD_INTERVALS[quality]
+  return `${a}·${b}·${c}`
 }
 
 const ROMAN_TABLE: ReadonlyArray<readonly [number, string]> = [

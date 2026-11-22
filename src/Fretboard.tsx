@@ -1,11 +1,13 @@
 import { useState, type CSSProperties } from 'react'
 import {
-  degreeGlyph,
+  TRIAD_INTERVALS,
   noteAt,
   noteIndex,
+  semitoneGlyph,
   toRoman,
+  type ChordQuality,
   type NoteName,
-  type TriadDegree,
+  type TriadSemitone,
 } from './theory'
 
 /** String labels, high (thin) → low (thick): e B G D A E. */
@@ -22,6 +24,7 @@ export type FretboardProps = {
   root: NoteName
   third: NoteName
   fifth: NoteName
+  quality: ChordQuality
   title?: string
   preferStart?: number
 }
@@ -68,12 +71,13 @@ function roleAt(
   return null
 }
 
-export function Fretboard({ root, third, fifth, title, preferStart }: FretboardProps) {
+export function Fretboard({ root, third, fifth, quality, title, preferStart }: FretboardProps) {
   const [start, setStart] = useState(() => suggestStart(root, preferStart))
   const rootPc = noteIndex(root)
   const thirdPc = noteIndex(third)
   const fifthPc = noteIndex(fifth)
   const frets = Array.from({ length: WINDOW }, (_, i) => start + i)
+  const [, thirdSemi, fifthSemi] = TRIAD_INTERVALS[quality]
 
   function shift(delta: number) {
     setStart((s) => clampStart(s + delta))
@@ -123,9 +127,15 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
               {frets.map((fret, colIdx) => {
                 const role = roleAt(stringIdx, fret, rootPc, thirdPc, fifthPc)
                 const note = noteAt((OPEN_PCS[stringIdx]! + fret) % 12)
-                const degree: TriadDegree | null =
-                  role === 'root' ? 1 : role === 'third' ? 3 : role === 'fifth' ? 5 : null
-                const glyph = degreeGlyph(degree)
+                const semi: TriadSemitone | null =
+                  role === 'root'
+                    ? 0
+                    : role === 'third'
+                      ? (thirdSemi as TriadSemitone)
+                      : role === 'fifth'
+                        ? (fifthSemi as TriadSemitone)
+                        : null
+                const glyph = semitoneGlyph(semi)
                 return (
                   <div
                     key={fret}
@@ -135,7 +145,7 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
                     {role ? (
                       <span
                         className={`fretboard-degree ${role}`}
-                        title={`${note} (${roleLabel(role)})`}
+                        title={`${note} (${roleLabel(role, thirdSemi)})`}
                       >
                         {glyph}
                       </span>
@@ -167,29 +177,29 @@ export function Fretboard({ root, third, fifth, title, preferStart }: FretboardP
           <span className="fretboard-degree root legend-swatch" aria-hidden="true">
             ▲
           </span>
-          Grundton (1)
+          Grundton (0)
         </li>
         <li>
           <span className="fretboard-degree third legend-swatch" aria-hidden="true">
-            3
+            {thirdSemi}
           </span>
-          Terz (3)
+          Terz (+{thirdSemi})
         </li>
         <li>
           <span className="fretboard-degree fifth legend-swatch" aria-hidden="true">
-            5
+            {fifthSemi}
           </span>
-          Quinte (5)
+          Quinte (+{fifthSemi})
         </li>
       </ul>
     </div>
   )
 }
 
-function roleLabel(role: MarkerRole): string {
-  if (role === 'root') return 'Grundton'
-  if (role === 'third') return 'Terz'
-  return 'Quinte'
+function roleLabel(role: MarkerRole, thirdSemi: number): string {
+  if (role === 'root') return 'Grundton (0)'
+  if (role === 'third') return `Terz (+${thirdSemi})`
+  return 'Quinte (+7)'
 }
 
 export default Fretboard

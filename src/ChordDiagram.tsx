@@ -7,9 +7,10 @@ import {
   type StringAction,
 } from './shapes'
 import {
-  degreeGlyph,
+  semitoneGlyph,
+  semitoneRole,
   toRoman,
-  triadDegree,
+  triadSemitone,
   type ChordQuality,
   type NoteName,
 } from './theory'
@@ -20,9 +21,9 @@ export type ChordDiagramProps = {
   value: readonly StringAction[]
   /** Optional finger numbers (1–4) parallel to value; shown inside fretted dots. */
   fingers?: readonly FingerNumber[]
-  /** Chord root — enables interval column (▲ / 3 / 5). */
+  /** Chord root — enables interval column (▲ / 3|4 / 7). */
   root?: NoteName
-  /** Chord quality — enables interval column (▲ / 3 / 5). */
+  /** Chord quality — enables interval column (▲ / 3|4 / 7). */
   quality?: ChordQuality
   /** When set, the diagram is interactive. */
   onChange?: (next: StringAction[]) => void
@@ -121,14 +122,15 @@ export function ChordDiagram({
           const isOpen = action === 'open' || action === 0
           const marker = isMute ? 'X' : isOpen ? 'O' : '·'
           const note = noteForStringAction(stringIdx, action)
-          const degree =
-            showIntervals && note != null ? triadDegree(note, root, quality) : null
-          const interval = degreeGlyph(degree)
+          const semi =
+            showIntervals && note != null ? triadSemitone(note, root, quality) : null
+          const interval = semitoneGlyph(semi)
+          const role = semitoneRole(semi)
           return (
             <div key={label} className="chord-diagram-string" data-string={label}>
               <span
                 className={`chord-diagram-interval${interval ? '' : ' empty'}${
-                  degree === 1 ? ' root' : degree === 3 ? ' third' : degree === 5 ? ' fifth' : ''
+                  role === 'root' ? ' root' : role === 'third' ? ' third' : role === 'fifth' ? ' fifth' : ''
                 }`}
                 aria-hidden="true"
                 title={label}

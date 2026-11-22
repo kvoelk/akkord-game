@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest'
 import {
   NOTES,
   TRIAD_INTERVALS,
-  degreeGlyph,
+  intervalsFormula,
   normalizeNoteInput,
   noteAt,
+  semitoneGlyph,
+  semitoneRole,
   toRoman,
-  triadDegree,
   triadNotes,
+  triadSemitone,
 } from './theory'
 
 describe('NOTES', () => {
@@ -76,37 +78,56 @@ describe('noteAt', () => {
   })
 })
 
-describe('triadDegree', () => {
-  it('maps C-Dur tones to 1 / 3 / 5', () => {
-    expect(triadDegree('C', 'C', 'dur')).toBe(1)
-    expect(triadDegree('E', 'C', 'dur')).toBe(3)
-    expect(triadDegree('G', 'C', 'dur')).toBe(5)
+describe('triadSemitone', () => {
+  it('maps C-Dur tones to 0 / 4 / 7', () => {
+    expect(triadSemitone('C', 'C', 'dur')).toBe(0)
+    expect(triadSemitone('E', 'C', 'dur')).toBe(4)
+    expect(triadSemitone('G', 'C', 'dur')).toBe(7)
   })
 
-  it('maps A-Moll tones to 1 / 3 / 5', () => {
-    expect(triadDegree('A', 'A', 'moll')).toBe(1)
-    expect(triadDegree('C', 'A', 'moll')).toBe(3)
-    expect(triadDegree('E', 'A', 'moll')).toBe(5)
+  it('maps A-Moll tones to 0 / 3 / 7', () => {
+    expect(triadSemitone('A', 'A', 'moll')).toBe(0)
+    expect(triadSemitone('C', 'A', 'moll')).toBe(3)
+    expect(triadSemitone('E', 'A', 'moll')).toBe(7)
   })
 
   it('returns null for non-chord tones and garbage', () => {
-    expect(triadDegree('D', 'C', 'dur')).toBeNull()
-    expect(triadDegree('xyz', 'C', 'dur')).toBeNull()
+    expect(triadSemitone('D', 'C', 'dur')).toBeNull()
+    expect(triadSemitone('xyz', 'C', 'dur')).toBeNull()
   })
 
   it('accepts aliased note spellings', () => {
-    expect(triadDegree('Cis', 'A', 'dur')).toBe(3)
-    expect(triadDegree('C#', 'A', 'dur')).toBe(3)
+    expect(triadSemitone('Cis', 'A', 'dur')).toBe(4)
+    expect(triadSemitone('C#', 'A', 'dur')).toBe(4)
   })
 })
 
-describe('degreeGlyph', () => {
-  it('renders ▲ / 3 / 5 and empty for null', () => {
-    expect(degreeGlyph(1)).toBe('▲')
-    expect(degreeGlyph(3)).toBe('3')
-    expect(degreeGlyph(5)).toBe('5')
-    expect(degreeGlyph(null)).toBe('')
-    expect(degreeGlyph(undefined)).toBe('')
+describe('semitoneGlyph', () => {
+  it('renders ▲ / 3|4 / 7 and empty for null', () => {
+    expect(semitoneGlyph(0)).toBe('▲')
+    expect(semitoneGlyph(3)).toBe('3')
+    expect(semitoneGlyph(4)).toBe('4')
+    expect(semitoneGlyph(7)).toBe('7')
+    expect(semitoneGlyph(null)).toBe('')
+    expect(semitoneGlyph(undefined)).toBe('')
+  })
+})
+
+describe('semitoneRole', () => {
+  it('maps offsets to root / third / fifth', () => {
+    expect(semitoneRole(0)).toBe('root')
+    expect(semitoneRole(3)).toBe('third')
+    expect(semitoneRole(4)).toBe('third')
+    expect(semitoneRole(7)).toBe('fifth')
+    expect(semitoneRole(1)).toBeNull()
+    expect(semitoneRole(null)).toBeNull()
+  })
+})
+
+describe('intervalsFormula', () => {
+  it('formats Dur and Moll as 0·4·7 / 0·3·7', () => {
+    expect(intervalsFormula('dur')).toBe('0·4·7')
+    expect(intervalsFormula('moll')).toBe('0·3·7')
   })
 })
 
